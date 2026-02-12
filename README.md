@@ -82,9 +82,19 @@ npm run dev
 
 ## 🚀 One-Line Deployment
 
-For laymen and quick setup on any device, use these one-liners:
+### 📱 Native Android APK
 
-### 📱 Android (Termux) / 💻 macOS / 🐧 Linux
+If you prefer a standalone app experience without using Termux, you can download the latest pre-built APK:
+
+1. Go to the [Social Portal Releases Page](https://github.com/IceMatrix256/social-portal/releases).
+2. Download the `app-debug.apk` file from the latest release.
+3. Install the `.apk` file on your Android device.
+
+---
+
+### 💻 Android (Termux) /  Mac / 🐧 Linux (One-Liner)
+
+This is for the "Power User" experience with a local proxy backend.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/icematrix256/social-portal/main/deploy/install.sh | bash

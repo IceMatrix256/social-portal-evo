@@ -125,11 +125,11 @@ def get_local_ip():
         return '127.0.0.1'
 
 if __name__ == '__main__':
-    # Ensure dist exists
+    # Ensure dist exists (optional for proxy mode)
     if not os.path.exists(DIST_DIR):
-        print(f"Error: Dist directory not found using any strategy.")
-        print("Please ensure 'dist/' folder is alongside this script.")
-        sys.exit(1)
+        print(f"⚠️ Warning: Dist directory not found. Static file serving disabled.")
+        print("Proxy mode is still active.")
+        DIST_DIR = "." # Fallback to current dir instead of exiting
 
     internal_ip = get_local_ip()
     print(f"\n--- Social Portal Portable Server ---")

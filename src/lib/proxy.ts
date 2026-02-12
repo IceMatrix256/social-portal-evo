@@ -1,12 +1,15 @@
 export function getProxyUrl(targetUrl: string): string {
+    // Detect if we are running in a native Capacitor environment
+    const isNative = (window as any).Capacitor?.isNative;
+
     // Misskey instances usually support CORS, and our proxy gets blocked by Cloudflare (403)
     if (targetUrl.includes('misskey.io') || targetUrl.includes('misskey.design')) {
         return targetUrl;
     }
 
-    // In Development, we use Vite's proxy (configured in vite.config.ts)
-    // to route /api/* requests to our local server.py (which handles the actual external fetching).
-    if (import.meta.env.DEV) {
+    // In Development (Web), we use Vite's proxy.
+    // In Native (Android APK), we MUST use a public proxy because localhost:8090 isn't available.
+    if (import.meta.env.DEV && !isNative) {
         if (targetUrl.includes('reddit.com')) {
             return targetUrl.replace(/^https?:\/\/(www\.)?reddit\.com/, '/api/reddit');
         }

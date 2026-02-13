@@ -53,7 +53,7 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         # Proxy Logic
-        if self.path.startswith('/api/proxy'):
+        if '/api/proxy' in self.path:
             # Generic proxy for any URL
             # Format: /api/proxy?url=https://example.com/foo
             from urllib.parse import urlparse, parse_qs
@@ -72,15 +72,16 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
         # SPA Logic: If file doesn't exist, serve index.html
         path = self.translate_path(self.path)
         if not os.path.exists(path) or os.path.isdir(path):
-            # Try serving as static file first (in case it IS a file but translate_path messed up? No.)
-            # If standard handler can't find it, serve index.html
-            # But SimpleHTTPRequestHandler is tricky to override properly for fallback.
-            # Easier approach: Check if path matches a file extension we expect? 
-            # Or just check existence.
             if not os.path.exists(path):
                 self.path = '/index.html'
         
         super().do_GET()
+
+    def end_headers(self):
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, User-Agent')
+        super().end_headers()
 
     def handle_proxy_direct(self, target_url):
         print(f"Direct Proxying -> {target_url}")
@@ -102,7 +103,6 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
                        self.send_header(key, value)
                 
                 self.send_header('Content-Length', str(len(body)))
-                self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 self.wfile.write(body)
         except urllib.error.HTTPError as e:
@@ -146,7 +146,6 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
                 
                 # We send the full body, so we set Content-Length
                 self.send_header('Content-Length', str(len(body)))
-                self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 self.wfile.write(body)
         except urllib.error.HTTPError as e:
@@ -160,9 +159,6 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_OPTIONS(self):
         self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
 def get_local_ip():

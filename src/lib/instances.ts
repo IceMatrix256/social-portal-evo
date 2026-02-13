@@ -1,33 +1,19 @@
 export const REDLIB_INSTANCES = [
-    "rl.bloat.cat",
-    "redlib.tux.pizza",
-    "redlib.ducks.party",
-    "redlib.privadency.com",
-    "redlib.catsarch.com",
-    "redlib.r4fo.com",
-    "red.ngn.tf",
-    "redlib.perennialte.ch",
-    "redlib.vny.xyz",
-    "reddit.projectsegfau.lt",
-    "redlib.nogafam.fr"
+    "l.opnxng.com", "redlib.catsarch.com", "redlib.perennialte.ch", "redlib.r4fo.com",
+    "redlib.cow.rip", "redlib.privacyredirect.com", "redlib.nadeko.net", "redlib.4o1x5.dev",
+    "redlib.orangenet.cc", "rl.bloat.cat", "redlib.tux.pizza"
 ];
 
 export const NITTER_INSTANCES = [
-    "twiiit.com",
-    "nitter.net",
-    "xcancel.com",
-    "nitter.space",
-    "nitter.poast.org",
-    "nitter.moomoo.me",
-    "nitter.privacydev.net",
-    "nitter.uzit.de"
+    "xcancel.com", "nitter.space", "nitter.poast.org", "nitter.moomoo.me",
+    "nitter.privacydev.net", "nuku.trabun.org", "lightbrd.com", "nitter.no-logs.com",
+    "nitter.cz", "nitter.rawbit.ninja", "nitter.uni-sonia.com", "nitter.tinfoil-hat.net",
+    "nitter.privacy.com.de"
 ];
 
 export const INVIDIOUS_INSTANCES = [
-    "redirect.invidious.io",
-    "yewtu.be",
-    "inv.nadeko.net",
-    "invidious.nerdvpn.de"
+    "redirect.invidious.io", "yewtu.be", "inv.nadeko.net", "invidious.nerdvpn.de",
+    "invidious.tiekoetter.com", "inv.riverside.rocks", "invidious.flokinet.to", "invidious.lunar.icu"
 ];
 
 import { fetchProxyContent } from "./proxy";
@@ -35,6 +21,7 @@ import { fetchProxyContent } from "./proxy";
 interface FetchOptions extends RequestInit {
     useProxyAsLastResort?: boolean;
     forceRefresh?: boolean;
+    validate?: (content: string) => boolean;
 }
 
 /**
@@ -64,7 +51,13 @@ export async function fetchWithInstanceFallback(
             clearTimeout(timeoutId);
 
             if (response.ok) {
-                return await response.text();
+                const text = await response.text();
+                // If validation is provided, check if content is actually what we expect
+                if (options.validate && !options.validate(text)) {
+                    console.warn(`[Instances] ${instance} returned 200 OK but failed content validation.`);
+                    continue;
+                }
+                return text;
             }
         } catch (error) {
             console.warn(`[Instances] ${instance} failed:`, error);
@@ -75,9 +68,9 @@ export async function fetchWithInstanceFallback(
         // Just use the first (representative) instance for the proxy attempt
         // because the proxy handles it anyway, but we need a valid absolute URL.
         const defaultUrl = `https://${instances[0]}${path.startsWith('/') ? '' : '/'}${path}`;
-        console.log(`[Instances] All instances failed, trying CORS proxy fallback via ${defaultUrl}`);
+        console.log(`[Instances] All instances failed or invalid, trying CORS proxy fallback via ${defaultUrl}`);
         return await fetchProxyContent(defaultUrl, options);
     }
 
-    throw new Error(`All ${instances.length} instances failed and no proxy fallback was used.`);
+    throw new Error(`All ${instances.length} instances failed/invalid and no proxy fallback was used.`);
 }

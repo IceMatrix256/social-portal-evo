@@ -10,7 +10,10 @@ export class InvidiousAdapter implements FeedAdapter {
         const path = `/api/v1/trending`;
 
         try {
-            const rawJson = await fetchWithInstanceFallback(path, INVIDIOUS_INSTANCES, options);
+            const rawJson = await fetchWithInstanceFallback(path, INVIDIOUS_INSTANCES, {
+                ...options,
+                validate: (content: string) => content.trim().startsWith('[') || content.trim().startsWith('{')
+            });
             const data = JSON.parse(rawJson);
 
             if (!Array.isArray(data)) {

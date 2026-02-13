@@ -20,7 +20,9 @@ export class RedditAdapter implements FeedAdapter {
 
         try {
             const rawContent = await fetchWithInstanceFallback(path, REDLIB_INSTANCES, {
-                headers: { 'User-Agent': 'SocialPortal/1.0' }
+                ...options,
+                headers: { 'User-Agent': 'SocialPortal/1.0' },
+                validate: (content: string) => content.includes('"kind": "Listing"')
             });
             const data = JSON.parse(rawContent);
 

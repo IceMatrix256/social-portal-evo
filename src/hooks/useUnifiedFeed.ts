@@ -10,6 +10,8 @@ import { ImgurAdapter } from "../adapters/imgur";
 import { PieFedAdapter } from "../adapters/piefed";
 import { MisskeyAdapter } from "../adapters/misskey";
 import { BlueskyAdapter } from "../adapters/bluesky";
+import { TwitterAdapter } from "../adapters/twitter";
+import { InvidiousAdapter } from "../adapters/invidious";
 import { NostrPhotosAdapter, NostrVideosAdapter } from "../adapters/nostrMedia";
 import { sanitizeHTML } from "../lib/sanitize";
 
@@ -32,10 +34,10 @@ export const FEED_CATEGORIES: CategoryDef[] = [
 // Map category → adapter names (lowercase match)
 const CATEGORY_MAP: Record<Exclude<FeedCategory, 'all'>, string[]> = {
     // Text: All social networks + RSS
-    text: ['mastodon', 'nostr', 'bluesky', 'misskey', 'reddit', 'lemmy', 'rss'],
+    text: ['mastodon', 'nostr', 'bluesky', 'misskey', 'reddit', 'lemmy', 'rss', 'twitter'],
 
     // Media: All social networks + dedicated media sources
-    media: ['pixelfed', 'imgur', 'piefed', 'nostr photos', 'nostr videos', 'peertube', 'mastodon', 'bluesky', 'reddit', 'lemmy', 'misskey'],
+    media: ['pixelfed', 'imgur', 'piefed', 'nostr photos', 'nostr videos', 'peertube', 'mastodon', 'bluesky', 'reddit', 'lemmy', 'misskey', 'youtube'],
 };
 
 // ── Default adapters ────────────────────────────────────────────
@@ -54,8 +56,10 @@ function createDefaultAdapters(): FeedAdapter[] {
         new NostrPhotosAdapter(),
         // Videos
         new NostrVideosAdapter(),
+        new InvidiousAdapter(),
         // Links
         new RedditAdapter("popular"),
+        new TwitterAdapter("trending"),
         new LemmyAdapter("https://lemmy.world"),
         new RSSAdapter("https://hnrss.org/frontpage"),
         new RSSAdapter("https://lobste.rs/rss"),

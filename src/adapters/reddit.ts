@@ -1,9 +1,9 @@
 import type { FeedAdapter, UnifiedPost } from "./types";
-import { fetchProxyContent } from "../lib/proxy";
+import { fetchWithInstanceFallback, REDLIB_INSTANCES } from "../lib/instances";
 
 export class RedditAdapter implements FeedAdapter {
     name = "Reddit";
-    description = "Front page of the internet";
+    description = "Front page of the internet (via Redlib)";
     private subreddit: string;
 
     constructor(subreddit: string = "popular") {
@@ -13,13 +13,13 @@ export class RedditAdapter implements FeedAdapter {
     async fetchPosts(topic?: string, options?: { forceRefresh?: boolean, category?: 'text' | 'media' | 'all' }): Promise<UnifiedPost[]> {
         const sub = topic || this.subreddit;
 
-        let jsonUrl = `https://www.reddit.com/r/${sub}.json?limit=40&raw_json=1`;
+        let path = `/r/${sub}.json?limit=40&raw_json=1`;
         if (options?.forceRefresh) {
-            jsonUrl += `&_t=${Date.now()}`;
+            path += `&_t=${Date.now()}`;
         }
 
         try {
-            const rawContent = await fetchProxyContent(jsonUrl, {
+            const rawContent = await fetchWithInstanceFallback(path, REDLIB_INSTANCES, {
                 headers: { 'User-Agent': 'SocialPortal/1.0' }
             });
             const data = JSON.parse(rawContent);

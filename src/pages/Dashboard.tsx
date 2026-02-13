@@ -88,10 +88,15 @@ const NETWORKS: NetworkDef[] = [
         icon: Video, gradient: 'from-rose-500 to-red-600', shadow: 'shadow-rose-500/20',
         category: 'videos',
     },
-    // Links
+    {
+        id: 'twitter', name: 'Twitter',
+        desc: 'Privacy-focused Twitter explorer (via Nitter)',
+        icon: Cloud, gradient: 'from-blue-400 to-indigo-500', shadow: 'shadow-blue-500/20',
+        category: 'social',
+    },
     {
         id: 'reddit', name: 'Reddit',
-        desc: 'Popular link aggregation',
+        desc: 'Popular link aggregation (via Redlib)',
         icon: Link2, gradient: 'from-orange-500 to-red-600', shadow: 'shadow-orange-500/20',
         category: 'links',
     },

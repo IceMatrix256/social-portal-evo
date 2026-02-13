@@ -5,7 +5,11 @@ export const REDLIB_INSTANCES = [
     "redlib.privadency.com",
     "redlib.catsarch.com",
     "redlib.r4fo.com",
-    "red.ngn.tf"
+    "red.ngn.tf",
+    "redlib.perennialte.ch",
+    "redlib.vny.xyz",
+    "reddit.projectsegfau.lt",
+    "redlib.nogafam.fr"
 ];
 
 export const NITTER_INSTANCES = [
@@ -13,7 +17,10 @@ export const NITTER_INSTANCES = [
     "nitter.net",
     "xcancel.com",
     "nitter.space",
-    "nitter.poast.org"
+    "nitter.poast.org",
+    "nitter.moomoo.me",
+    "nitter.privacydev.net",
+    "nitter.uzit.de"
 ];
 
 export const INVIDIOUS_INSTANCES = [

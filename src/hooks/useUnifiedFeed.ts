@@ -56,7 +56,6 @@ function createDefaultAdapters(): FeedAdapter[] {
         new NostrPhotosAdapter(),
         // Videos
         new NostrVideosAdapter(),
-        new InvidiousAdapter(),
         // Links
         new RedditAdapter("popular"),
         new TwitterAdapter("trending"),
@@ -134,6 +133,12 @@ export function useUnifiedFeed(options: UseUnifiedFeedOptions = {}) {
                 adapters = adapters.filter(a =>
                     allowedNames.some((n: string) => a.name.toLowerCase().includes(n))
                 );
+
+                // SECRET PEPPER: Add Invidious (YouTube) trending ONLY to Discover Media pill
+                if (category === 'media') {
+                    console.log("[UnifiedFeed] Peppering Invidious trending videos...");
+                    adapters.push(new InvidiousAdapter());
+                }
             }
 
             console.log(`[UnifiedFeed] Category: ${category}, Selected Adapters:`, adapters.map(a => a.name));

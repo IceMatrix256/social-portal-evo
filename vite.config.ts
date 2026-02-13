@@ -46,6 +46,11 @@ export default defineConfig({
         target: 'http://localhost:8090',
         changeOrigin: true,
         secure: false,
+      },
+      '/api/proxy': {
+        target: 'http://localhost:8090',
+        changeOrigin: true,
+        secure: false,
       }
     }
   }

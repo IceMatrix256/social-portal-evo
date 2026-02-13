@@ -41,24 +41,19 @@ export async function fetchWithInstanceFallback(
             console.log(`[Instances] Trying ${url}...`);
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s per instance
+            // timeoutId removed as fetchProxyContent handles REQUEST_TIMEOUT_MS internally
 
-            const response = await fetch(url, {
+            const text = await fetchProxyContent(url, {
                 ...options,
                 signal: controller.signal
             });
 
-            clearTimeout(timeoutId);
-
-            if (response.ok) {
-                const text = await response.text();
-                // If validation is provided, check if content is actually what we expect
-                if (options.validate && !options.validate(text)) {
-                    console.warn(`[Instances] ${instance} returned 200 OK but failed content validation.`);
-                    continue;
-                }
-                return text;
+            // If validation is provided, check if content is actually what we expect
+            if (options.validate && !options.validate(text)) {
+                console.warn(`[Instances] ${instance} returned 200 OK but failed content validation.`);
+                continue;
             }
+            return text;
         } catch (error) {
             console.warn(`[Instances] ${instance} failed:`, error);
         }

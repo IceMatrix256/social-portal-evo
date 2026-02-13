@@ -53,6 +53,17 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         # Proxy Logic
+        if self.path.startswith('/api/proxy'):
+            # Generic proxy for any URL
+            # Format: /api/proxy?url=https://example.com/foo
+            from urllib.parse import urlparse, parse_qs
+            query = urlparse(self.path).query
+            params = parse_qs(query)
+            if 'url' in params:
+                target_url = params['url'][0]
+                self.handle_proxy_direct(target_url)
+                return
+
         for prefix, target in PROXIES.items():
             if self.path.startswith(prefix):
                 self.handle_proxy(target, prefix)
@@ -70,6 +81,38 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
                 self.path = '/index.html'
         
         super().do_GET()
+
+    def handle_proxy_direct(self, target_url):
+        print(f"Direct Proxying -> {target_url}")
+        try:
+            req = urllib.request.Request(target_url)
+            req.add_header('User-Agent', random.choice(USER_AGENTS))
+            
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            
+            with urllib.request.urlopen(req, timeout=15, context=ctx) as response:
+                body = response.read()
+                self.send_response(response.status)
+                
+                skip_headers = {'transfer-encoding', 'content-encoding', 'content-length', 'connection'}
+                for key, value in response.headers.items():
+                   if key.lower() not in skip_headers:
+                       self.send_header(key, value)
+                
+                self.send_header('Content-Length', str(len(body)))
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(body)
+        except urllib.error.HTTPError as e:
+            self.send_response(e.code)
+            self.end_headers()
+            self.wfile.write(e.read())
+        except Exception as e:
+            self.send_response(500)
+            self.end_headers()
+            self.wfile.write(str(e).encode('utf-8'))
 
     def handle_proxy(self, target_base, prefix):
         # Construct target URL

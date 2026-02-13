@@ -19,7 +19,13 @@ export class TwitterAdapter implements FeedAdapter {
             const rawXml = await fetchWithInstanceFallback(path, NITTER_INSTANCES, {
                 ...options,
                 headers: { 'User-Agent': 'SocialPortal/1.0' },
-                validate: (content: string) => content.includes('<rss') || content.includes('<channel')
+                validate: (content: string) => {
+                    const hasRss = content.includes('<rss') || content.includes('<channel');
+                    const isError = content.toLowerCase().includes('whitelisted') ||
+                        content.includes('Verify your request') ||
+                        content.includes('bot protection');
+                    return hasRss && !isError;
+                }
             });
 
             // Basic RSS parsing (we could use a library, but let's keep it lightweight)

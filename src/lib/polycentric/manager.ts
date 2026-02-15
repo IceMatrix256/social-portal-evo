@@ -2,7 +2,7 @@
 import { getPublicKey, utils, hashes } from '@noble/ed25519';
 import { sha512 } from '@noble/hashes/sha2.js';
 import { migrateFromLocalStorage } from '../secureStorage';
-import { syncIdentities, getSyncedIdentities } from '../sync';
+// import { syncIdentities, getSyncedIdentities } from '../sync';
 
 // Configure @noble/ed25519 v3
 hashes.sha512 = sha512;
@@ -47,7 +47,7 @@ function saveLocalIdentity(identity: LocalIdentity): void {
     localStorage.setItem(LOCAL_IDENTITIES_KEY, JSON.stringify(all));
     localStorage.setItem(ACTIVE_IDENTITY_KEY, identity.systemKey);
     // Sync to P2P
-    syncIdentities(all);
+    // syncIdentities(all);
 }
 
 function getActiveLocalIdentity(): LocalIdentity | null {
@@ -160,16 +160,16 @@ export const polycentricManager = {
         fallbackIdentity = getActiveLocalIdentity();
 
         // Listen for P2P synced identities
-        getSyncedIdentities((data) => {
-            if (data) {
-                localStorage.setItem(LOCAL_IDENTITIES_KEY, JSON.stringify(data));
-                // Update current if changed
-                const activeKey = localStorage.getItem(ACTIVE_IDENTITY_KEY);
-                if (activeKey && data[activeKey]) {
-                    fallbackIdentity = data[activeKey];
-                }
-            }
-        });
+        // getSyncedIdentities((data) => {
+        //     if (data) {
+        //         localStorage.setItem(LOCAL_IDENTITIES_KEY, JSON.stringify(data));
+        //         // Update current if changed
+        //         const activeKey = localStorage.getItem(ACTIVE_IDENTITY_KEY);
+        //         if (activeKey && data[activeKey]) {
+        //             fallbackIdentity = data[activeKey];
+        //         }
+        //     }
+        // });
 
         return !!fallbackIdentity;
     },

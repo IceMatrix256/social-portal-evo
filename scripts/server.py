@@ -37,6 +37,8 @@ PROXIES = {
     '/api/misskey': 'https://misskey.io',
     '/api/misskey-design': 'https://misskey.design',
     '/api/bluesky': 'https://public.api.bsky.app',
+    '/api/nitter': 'https://nitter.net',
+    '/api/libreddit': 'https://libreddit.spike.codes',
 }
 
 USER_AGENTS = [

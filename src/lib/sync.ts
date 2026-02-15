@@ -25,11 +25,18 @@ export async function storeChunk(data: string): Promise<string> {
 // Retrieve chunk
 export async function retrieveChunk(cid: string): Promise<string> {
   const ipfs = await initIPFS();
-  const chunks = [];
+  const chunks: Uint8Array[] = [];
   for await (const chunk of ipfs.cat(cid)) {
     chunks.push(chunk);
   }
-  return Buffer.concat(chunks).toString();
+  const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+  const concatenated = new Uint8Array(totalLength);
+  let offset = 0;
+  for (const chunk of chunks) {
+    concatenated.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return new TextDecoder().decode(concatenated);
 }
 
 // For P2P sync using Gun

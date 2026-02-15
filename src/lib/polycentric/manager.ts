@@ -2,7 +2,7 @@
 import { getPublicKey, utils, hashes } from '@noble/ed25519';
 import { sha512 } from '@noble/hashes/sha2.js';
 import { migrateFromLocalStorage } from '../secureStorage';
-import { syncIdentities, getSyncedIdentities, storeChunk, retrieveChunk } from '../sync';
+import { syncIdentities, getSyncedIdentities } from '../sync';
 
 // Configure @noble/ed25519 v3
 hashes.sha512 = sha512;

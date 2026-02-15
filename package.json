@@ -10,7 +10,7 @@
     "build": "vite build",
     "build:portable": "npm run build && zip -r social-portal-portable.zip dist scripts/server.py scripts/serve-update.py",
     "lint": "eslint .",
-    "test": "vitest",
+    "test": "playwright test",
     "test:e2e": "playwright test",
     "preview": "vite preview"
   },
